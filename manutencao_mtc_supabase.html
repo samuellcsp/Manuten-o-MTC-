@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manutenção – Minas Tênis Clube</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f2;--surface:#ffffff;--surface2:#f0eeea;--border:#e0ddd6;--border2:#ccc9c0;
+  --text:#1a1a18;--text2:#6b6960;--text3:#9a9890;
+  --green:#0F6E56;--green-light:#E1F5EE;--green-dark:#085041;--green-text:#3B6D11;--green-bg:#EAF3DE;
+  --amber-bg:#FAEEDA;--amber-text:#854F0B;
+  --red-bg:#FCEBEB;--red-text:#A32D2D;
+  --blue-bg:#E6F1FB;--blue-text:#185FA5;
+  --gray-bg:#F1EFE8;--gray-text:#5F5E5A;
+  --radius:8px;--radius-lg:12px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1a1a18;--surface:#232320;--surface2:#2c2c29;--border:#3a3a36;--border2:#4a4a46;
+    --text:#f0eeea;--text2:#9a9890;--text3:#6b6960;
+    --green-light:#04342C;--green-text:#9FE1CB;--green-bg:#085041;
+    --amber-bg:#412402;--amber-text:#FAC775;
+    --red-bg:#501313;--red-text:#F7C1C1;
+    --blue-bg:#042C53;--blue-text:#B5D4F4;
+    --gray-bg:#2C2C2A;--gray-text:#B4B2A9;
+  }
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+.app{max-width:960px;margin:0 auto;min-height:100vh}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.logo{width:38px;height:38px;border-radius:var(--radius);background:var(--green);display:flex;align-items:center;justify-content:center;color:var(--green-light);font-size:20px;flex-shrink:0}
+.header-title{font-size:15px;font-weight:600;color:var(--text)}
+.header-sub{font-size:12px;color:var(--text2)}
+.nav{display:flex;gap:4px;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav-btn{padding:7px 14px;border-radius:var(--radius);border:1px solid transparent;background:transparent;font-size:13px;color:var(--text2);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit}
+.nav-btn.active{background:var(--surface2);border-color:var(--border2);color:var(--text);font-weight:500}
+.nav-btn:hover:not(.active){background:var(--surface2)}
+.content{padding:20px}
+.section{display:none}
+.section.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--surface2);border-radius:var(--radius);padding:12px 14px}
+.stat-label{font-size:11px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.stat-val{font-size:24px;font-weight:600;color:var(--text)}
+.btn{padding:7px 14px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;font-size:13px;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit}
+.btn:hover{background:var(--surface2)}
+.btn-primary{background:var(--green);border-color:var(--green);color:#fff}
+.btn-primary:hover{background:var(--green-dark);border-color:var(--green-dark)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-row.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:12px;color:var(--text2);font-weight:500}
+.form-group input,.form-group select,.form-group textarea{font-size:13px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text);padding:8px 10px;font-family:inherit;outline:none;transition:border .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green)}
+.form-group textarea{resize:vertical;min-height:75px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 10px;font-weight:500;color:var(--text2);border-bottom:1px solid var(--border);font-size:12px}
+td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.badge{display:inline-block;padding:3px 8px;border-radius:var(--radius);font-size:11px;font-weight:600}
+.badge-green{background:var(--green-bg);color:var(--green-text)}
+.badge-amber{background:var(--amber-bg);color:var(--amber-text)}
+.badge-red{background:var(--red-bg);color:var(--red-text)}
+.badge-blue{background:var(--blue-bg);color:var(--blue-text)}
+.badge-gray{background:var(--gray-bg);color:var(--gray-text)}
+select.status-sel{font-size:12px;border-radius:5px;border:1px solid var(--border2);background:var(--surface);color:var(--text);padding:4px 7px;font-family:inherit}
+.icon-btn{background:transparent;border:none;cursor:pointer;color:var(--text2);font-size:18px;padding:4px 6px;border-radius:var(--radius);line-height:1}
+.icon-btn:hover{background:var(--red-bg);color:var(--red-text)}
+.empty{text-align:center;padding:32px;color:var(--text3);font-size:13px}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:20px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;color:var(--text)}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.alert{padding:10px 14px;border-radius:var(--radius);font-size:13px;margin-bottom:12px}
+.alert-warn{background:var(--amber-bg);color:var(--amber-text)}
+@media(max-width:520px){
+  .form-row{grid-template-columns:1fr}
+  .header-sub{display:none}
+  .content{padding:12px}
+  td,th{padding:7px 8px;font-size:12px}
+}
+</style>
+</head>
+<body>
+<!--
+SISTEMA MODIFICADO PARA USAR SUPABASE (NUVEM)
+
+ANTES DE USAR:
+1. Crie conta no Supabase
+2. Crie as tabelas
+3. Cole sua URL e KEY nas variáveis:
+   SUPABASE_URL
+   SUPABASE_KEY
+-->
+
+<div class="app">
+
+<div class="header">
+  <div class="logo">🔧</div>
+  <div>
+    <div class="header-title">Minas Tênis Clube</div>
+    <div class="header-sub">Sistema de Gestão de Manutenção</div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showSection('dashboard',this)">📊 Painel</button>
+  <button class="nav-btn" onclick="showSection('chamados',this)">📋 Chamados</button>
+  <button class="nav-btn" onclick="showSection('ferramentas',this)">🔧 Ferramentas</button>
+  <button class="nav-btn" onclick="showSection('estoque',this)">📦 Estoque</button>
+  <button class="nav-btn" onclick="showSection('relatorios',this)">📄 Relatórios</button>
+</div>
+
+<div class="content">
+
+<!-- PAINEL -->
+<div class="section active" id="sec-dashboard">
+  <div class="stats-grid" id="dash-stats"></div>
+  <div class="card">
+    <div class="card-title">⚠️ Chamados recentes</div>
+    <div id="dash-chamados"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🚨 Estoque crítico</div>
+    <div id="dash-estoque"></div>
+  </div>
+</div>
+
+<!-- CHAMADOS -->
+<div class="section" id="sec-chamados">
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="openModal('modal-chamado')">+ Novo chamado</button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Descrição</th><th>Local</th><th>Prioridade</th><th>Status</th><th>Data</th><th>Resp.</th><th></th></tr></thead>
+        <tbody id="tb-chamados"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FERRAMENTAS -->
+<div class="section" id="sec-ferramentas">
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="openModal('modal-ferramenta')">+ Cadastrar ferramenta</button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ferramenta</th><th>Código</th><th>Status</th><th>Com quem</th><th>Local</th><th></th></tr></thead>
+        <tbody id="tb-ferramentas"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ESTOQUE -->
+<div class="section" id="sec-estoque">
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="openModal('modal-estoque')">+ Adicionar material</button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Material</th><th>Categoria</th><th>Qtd. atual</th><th>Mínimo</th><th>Unidade</th><th>Local</th><th></th></tr></thead>
+        <tbody id="tb-estoque"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- RELATÓRIOS -->
+<div class="section" id="sec-relatorios">
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="openModal('modal-relatorio')">+ Novo relatório</button>
+  </div>
+  <div class="alert alert-warn">💡 Para exportar como PDF: abra o relatório desejado, clique em "Imprimir / Exportar PDF" e escolha "Salvar como PDF" na janela de impressão.</div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Título</th><th>Técnico</th><th>Data</th><th>Chamado</th><th>Ações</th></tr></thead>
+        <tbody id="tb-relatorios"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- MODAL: CHAMADO -->
+<div class="modal-bg" id="modal-chamado">
+  <div class="modal">
+    <div class="modal-title">Novo chamado <button class="icon-btn" onclick="closeModal('modal-chamado')">✕</button></div>
+    <div class="form-row full"><div class="form-group"><label>Descrição do problema *</label><textarea id="c-desc" placeholder="Descreva o problema encontrado..."></textarea></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>Local no clube</label>
+        <select id="c-local"><option>Piscina</option><option>Quadra de tênis</option><option>Vestiário</option><option>Academia</option><option>Área administrativa</option><option>Restaurante</option><option>Estacionamento</option><option>Outro</option></select>
+      </div>
+      <div class="form-group"><label>Prioridade</label>
+        <select id="c-prio"><option>Baixa</option><option>Média</option><option>Alta</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Responsável</label><input id="c-resp" placeholder="Nome do técnico"/></div>
+      <div class="form-group"><label>Data de abertura</label><input type="date" id="c-data"/></div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>Observações</label><textarea id="c-obs" placeholder="Observações adicionais..." style="min-height:55px"></textarea></div></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-chamado')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarChamado()">Salvar chamado</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: FERRAMENTA -->
+<div class="modal-bg" id="modal-ferramenta">
+  <div class="modal">
+    <div class="modal-title">Cadastrar ferramenta <button class="icon-btn" onclick="closeModal('modal-ferramenta')">✕</button></div>
+    <div class="form-row">
+      <div class="form-group"><label>Nome da ferramenta *</label><input id="f-nome" placeholder="Ex: Furadeira Bosch 650W"/></div>
+      <div class="form-group"><label>Código / Patrimônio</label><input id="f-cod" placeholder="Ex: F-001"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Status</label>
+        <select id="f-status"><option>Disponível</option><option>Em uso</option><option>Manutenção</option></select>
+      </div>
+      <div class="form-group"><label>Com quem está</label><input id="f-resp" placeholder="Nome ou —"/></div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>Localização</label><input id="f-local" placeholder="Ex: Almoxarifado Central – Prateleira B"/></div></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-ferramenta')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarFerramenta()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ESTOQUE -->
+<div class="modal-bg" id="modal-estoque">
+  <div class="modal">
+    <div class="modal-title">Adicionar material <button class="icon-btn" onclick="closeModal('modal-estoque')">✕</button></div>
+    <div class="form-row">
+      <div class="form-group"><label>Material *</label><input id="e-nome" placeholder="Ex: Lâmpada LED 9W"/></div>
+      <div class="form-group"><label>Categoria</label>
+        <select id="e-cat"><option>Elétrico</option><option>Hidráulico</option><option>Limpeza</option><option>Pintura</option><option>Ferragens</option><option>Piscina</option><option>Outros</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Quantidade atual</label><input type="number" id="e-qtd" placeholder="0" min="0"/></div>
+      <div class="form-group"><label>Quantidade mínima</label><input type="number" id="e-min" placeholder="5" min="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Unidade</label>
+        <select id="e-un"><option>un</option><option>kg</option><option>litro</option><option>metro</option><option>caixa</option><option>rolo</option><option>par</option></select>
+      </div>
+      <div class="form-group"><label>Local no depósito</label><input id="e-local" placeholder="Ex: Prateleira A2"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-estoque')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEstoque()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RELATÓRIO -->
+<div class="modal-bg" id="modal-relatorio">
+  <div class="modal">
+    <div class="modal-title">Novo relatório <button class="icon-btn" onclick="closeModal('modal-relatorio')">✕</button></div>
+    <div class="form-row full"><div class="form-group"><label>Título *</label><input id="r-titulo" placeholder="Ex: Troca de bomba d'água – Piscina Principal"/></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>Técnico responsável</label><input id="r-tec" placeholder="Nome"/></div>
+      <div class="form-group"><label>Data do serviço</label><input type="date" id="r-data"/></div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>Chamado relacionado (nº)</label><input id="r-chamado" placeholder="Ex: #3 — ou deixe em branco"/></div></div>
+    <div class="form-row full"><div class="form-group"><label>Descrição do serviço realizado</label><textarea id="r-desc" placeholder="Descreva detalhadamente o que foi executado..."></textarea></div></div>
+    <div class="form-row full"><div class="form-group"><label>Materiais utilizados</label><textarea id="r-mat" placeholder="Ex: 2 lâmpadas LED 9W, 1 metro de mangueira 3/4..."></textarea></div></div>
+    <div class="form-row full"><div class="form-group"><label>Observações / Recomendações</label><textarea id="r-obs" placeholder="Próximas manutenções recomendadas, pendências..." style="min-height:55px"></textarea></div></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-relatorio')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarRelatorio()">Salvar relatório</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const SUPABASE_URL = 'COLE_SUA_URL_DO_SUPABASE_AQUI';
+const SUPABASE_KEY = 'COLE_SUA_CHAVE_PUBLICA_AQUI';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+</script>
+
+<script>
+// ─── DADOS ───────────────────────────────────────────────
+let data = {
+  chamados: [],
+  ferramentas: [],
+  estoque: [],
+  relatorios: []
+};
+
+async function loadData(){
+
+  const { data: chamados } =
+    await supabaseClient.from('chamados').select('*');
+
+  data.chamados = (chamados || []).map(c => ({
+    id: c.id,
+    desc: c.descricao,
+    local: c.local,
+    prio: c.prioridade,
+    resp: c.responsavel || '—',
+    data: c.data_abertura,
+    obs: c.observacoes || '',
+    status: c.status || 'Aberto'
+  }));
+
+  renderAll();
+}
+function saveData(){
+  // Dados agora são salvos online no Supabase
+}
+
+// ─── NAVEGAÇÃO ────────────────────────────────────────────
+function showSection(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='dashboard')renderDashboard();
+}
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  // set today's date on date fields
+  const today=new Date().toISOString().slice(0,10);
+  const df=document.querySelector('#'+id+' input[type="date"]');
+  if(df&&!df.value)df.value=today;
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ─── BADGES ──────────────────────────────────────────────
+function prioBadge(p){
+  if(p==='Alta')return '<span class="badge badge-red">🔴 Alta</span>';
+  if(p==='Média')return '<span class="badge badge-amber">🟡 Média</span>';
+  return '<span class="badge badge-green">🟢 Baixa</span>';
+}
+function statusBadge(s){
+  const m={Aberto:'badge-amber','Em andamento':'badge-blue',Concluído:'badge-green',Disponível:'badge-green','Em uso':'badge-amber','Manutenção':'badge-red'};
+  return `<span class="badge ${m[s]||'badge-gray'}">${s}</span>`;
+}
+
+// ─── CHAMADOS ────────────────────────────────────────────
+async function salvarChamado(){
+
+  const desc=document.getElementById('c-desc').value.trim();
+
+  if(!desc){
+    alert('Informe a descrição do problema.');
+    return;
+  }
+
+  await supabaseClient.from('chamados').insert([{
+    descricao: desc,
+    local: document.getElementById('c-local').value,
+    prioridade: document.getElementById('c-prio').value,
+    responsavel: document.getElementById('c-resp').value || '—',
+    data_abertura: document.getElementById('c-data').value || new Date().toISOString().slice(0,10),
+    observacoes: document.getElementById('c-obs').value,
+    status: 'Aberto'
+  }]);
+
+  await loadData();
+
+  closeModal('modal-chamado');
+
+  ['c-desc','c-resp','c-data','c-obs'].forEach(
+    id => document.getElementById(id).value=''
+  );
+}
+function alterarStatus(i,val){data.chamados[i].status=val;saveData();renderDashboard();}
+function deleteChamado(i){if(confirm('Remover este chamado?')){data.chamados.splice(i,1);saveData();renderChamados();renderDashboard();}}
+
+function renderChamados(){
+  const tb=document.getElementById('tb-chamados');
+  if(!data.chamados.length){tb.innerHTML='<tr><td colspan="8"><div class="empty">Nenhum chamado registrado ainda</div></td></tr>';return;}
+  tb.innerHTML=data.chamados.map((c,i)=>`
+    <tr>
+      <td><b>#${c.id}</b></td>
+      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${c.desc}">${c.desc}</td>
+      <td>${c.local}</td>
+      <td>${prioBadge(c.prio)}</td>
+      <td><select class="status-sel" onchange="alterarStatus(${i},this.value)">
+        <option ${c.status==='Aberto'?'selected':''}>Aberto</option>
+        <option ${c.status==='Em andamento'?'selected':''}>Em andamento</option>
+        <option ${c.status==='Concluído'?'selected':''}>Concluído</option>
+      </select></td>
+      <td style="white-space:nowrap">${c.data}</td>
+      <td>${c.resp}</td>
+      <td><button class="icon-btn" onclick="deleteChamado(${i})" title="Remover">🗑</button></td>
+    </tr>`).join('');
+}
+
+// ─── FERRAMENTAS ─────────────────────────────────────────
+function salvarFerramenta(){
+  const nome=document.getElementById('f-nome').value.trim();
+  if(!nome){alert('Informe o nome da ferramenta.');return;}
+  data.ferramentas.push({
+    nome,cod:document.getElementById('f-cod').value||'—',
+    status:document.getElementById('f-status').value,
+    resp:document.getElementById('f-resp').value||'—',
+    local:document.getElementById('f-local').value||'—'
+  });
+  saveData();renderFerramentas();closeModal('modal-ferramenta');
+  ['f-nome','f-cod','f-resp','f-local'].forEach(id=>document.getElementById(id).value='');
+}
+function deleteFerramenta(i){if(confirm('Remover esta ferramenta?')){data.ferramentas.splice(i,1);saveData();renderFerramentas();}}
+
+function renderFerramentas(){
+  const tb=document.getElementById('tb-ferramentas');
+  if(!data.ferramentas.length){tb.innerHTML='<tr><td colspan="6"><div class="empty">Nenhuma ferramenta cadastrada</div></td></tr>';return;}
+  tb.innerHTML=data.ferramentas.map((f,i)=>`
+    <tr>
+      <td><b>${f.nome}</b></td>
+      <td>${f.cod}</td>
+      <td>${statusBadge(f.status)}</td>
+      <td>${f.resp}</td>
+      <td>${f.local}</td>
+      <td><button class="icon-btn" onclick="deleteFerramenta(${i})" title="Remover">🗑</button></td>
+    </tr>`).join('');
+}
+
+// ─── ESTOQUE ─────────────────────────────────────────────
+function salvarEstoque(){
+  const nome=document.getElementById('e-nome').value.trim();
+  if(!nome){alert('Informe o nome do material.');return;}
+  data.estoque.push({
+    nome,cat:document.getElementById('e-cat').value,
+    qtd:parseInt(document.getElementById('e-qtd').value)||0,
+    min:parseInt(document.getElementById('e-min').value)||0,
+    un:document.getElementById('e-un').value,
+    local:document.getElementById('e-local').value||'—'
+  });
+  saveData();renderEstoque();renderDashboard();closeModal('modal-estoque');
+  ['e-nome','e-qtd','e-min','e-local'].forEach(id=>document.getElementById(id).value='');
+}
+function deleteEstoque(i){if(confirm('Remover este material?')){data.estoque.splice(i,1);saveData();renderEstoque();renderDashboard();}}
+
+function renderEstoque(){
+  const tb=document.getElementById('tb-estoque');
+  if(!data.estoque.length){tb.innerHTML='<tr><td colspan="7"><div class="empty">Nenhum material cadastrado</div></td></tr>';return;}
+  tb.innerHTML=data.estoque.map((e,i)=>{
+    const crit=e.min>0&&e.qtd<=e.min;
+    return`<tr${crit?' style="background:var(--red-bg)"':''}>
+      <td><b>${e.nome}</b></td>
+      <td>${e.cat}</td>
+      <td>${crit?`<span class="badge badge-red">⚠ ${e.qtd}</span>`:e.qtd}</td>
+      <td>${e.min}</td>
+      <td>${e.un}</td>
+      <td>${e.local}</td>
+      <td><button class="icon-btn" onclick="deleteEstoque(${i})" title="Remover">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── RELATÓRIOS ──────────────────────────────────────────
+function salvarRelatorio(){
+  const titulo=document.getElementById('r-titulo').value.trim();
+  if(!titulo){alert('Informe o título do relatório.');return;}
+  data.relatorios.unshift({
+    titulo,tec:document.getElementById('r-tec').value||'—',
+    data:document.getElementById('r-data').value||new Date().toISOString().slice(0,10),
+    chamado:document.getElementById('r-chamado').value||'—',
+    desc:document.getElementById('r-desc').value,
+    mat:document.getElementById('r-mat').value,
+    obs:document.getElementById('r-obs').value
+  });
+  saveData();renderRelatorios();closeModal('modal-relatorio');
+  ['r-titulo','r-tec','r-data','r-chamado','r-desc','r-mat','r-obs'].forEach(id=>document.getElementById(id).value='');
+}
+function deleteRelatorio(i){if(confirm('Remover este relatório?')){data.relatorios.splice(i,1);saveData();renderRelatorios();}}
+
+function exportarPDF(i){
+  const r=data.relatorios[i];
+  const linhas=r=>{
+    const rows=[];
+    const add=(k,v)=>{if(v&&v.trim&&v.trim())rows.push(`<tr><td class="lbl">${k}</td><td>${v.replace(/\n/g,'<br>')}</td></tr>`);};
+    add('Título',r.titulo);add('Técnico responsável',r.tec);add('Data do serviço',r.data);
+    add('Chamado relacionado',r.chamado==='—'?'':r.chamado);
+    add('Serviço realizado',r.desc);add('Materiais utilizados',r.mat);add('Observações',r.obs);
+    return rows.join('');
+  };
+  const html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Relatório – ${r.titulo}</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:720px;margin:40px auto;color:#1a1a18;font-size:13px}
+.header{border-bottom:2px solid #0F6E56;padding-bottom:12px;margin-bottom:24px}
+.club{font-size:11px;color:#6b6960;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+h1{font-size:18px;font-weight:700;color:#1a1a18;margin-bottom:2px}
+.sub{font-size:12px;color:#6b6960}
+table{width:100%;border-collapse:collapse;margin-top:16px}
+td{padding:9px 12px;border-bottom:1px solid #e0ddd6;vertical-align:top;font-size:13px}
+.lbl{font-weight:600;color:#6b6960;width:36%;white-space:nowrap}
+.footer{margin-top:40px;padding-top:12px;border-top:1px solid #e0ddd6;font-size:11px;color:#9a9890;text-align:center}
+@media print{body{margin:20px}}
+</style></head><body>
+<div class="header">
+  <div class="club">Minas Tênis Clube — Departamento de Manutenção</div>
+  <h1>Relatório de Manutenção</h1>
+  <div class="sub">Emitido em ${new Date().toLocaleDateString('pt-BR')}</div>
+</div>
+<table>${linhas(r)}</table>
+<div class="footer">Sistema de Gestão de Manutenção – Minas Tênis Clube</div>
+</body></html>`;
+  const w=window.open('','_blank','width=800,height=700');
+  if(w){
+    w.document.write(html);
+    w.document.close();
+    setTimeout(()=>{w.focus();w.print();},500);
+  } else {
+    alert('Por favor, permita pop-ups para este site para exportar o PDF.');
+  }
+}
+
+// ─── DASHBOARD ───────────────────────────────────────────
+function renderDashboard(){
+  const abertos=data.chamados.filter(c=>c.status==='Aberto').length;
+  const andamento=data.chamados.filter(c=>c.status==='Em andamento').length;
+  const concluidos=data.chamados.filter(c=>c.status==='Concluído').length;
+  const criticos=data.estoque.filter(e=>e.min>0&&e.qtd<=e.min).length;
+
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="stat"><div class="stat-label">Chamados abertos</div><div class="stat-val">${abertos}</div></div>
+    <div class="stat"><div class="stat-label">Em andamento</div><div class="stat-val">${andamento}</div></div>
+    <div class="stat"><div class="stat-label">Concluídos</div><div class="stat-val">${concluidos}</div></div>
+    <div class="stat"><div class="stat-label">Estoque crítico</div><div class="stat-val" style="color:${criticos>0?'var(--red-text)':'var(--text)'}">${criticos}</div></div>`;
+
+  const dc=document.getElementById('dash-chamados');
+  const recentes=data.chamados.filter(c=>c.status!=='Concluído').slice(0,6);
+  if(!recentes.length){dc.innerHTML='<div class="empty">Nenhum chamado aberto no momento ✅</div>';}
+  else dc.innerHTML=`<div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Descrição</th><th>Local</th><th>Prioridade</th><th>Status</th><th>Data</th></tr></thead>
+    <tbody>${recentes.map(c=>`<tr><td>#${c.id}</td><td>${c.desc.slice(0,50)}${c.desc.length>50?'…':''}</td><td>${c.local}</td><td>${prioBadge(c.prio)}</td><td>${statusBadge(c.status)}</td><td>${c.data}</td></tr>`).join('')}</tbody>
+  </table></div>`;
+
+  const de=document.getElementById('dash-estoque');
+  const crit=data.estoque.filter(e=>e.min>0&&e.qtd<=e.min);
+  if(!crit.length){de.innerHTML='<div class="empty" style="color:var(--green-text)">Nenhum material em nível crítico ✅</div>';}
+  else de.innerHTML=`<div class="table-wrap"><table>
+    <thead><tr><th>Material</th><th>Categoria</th><th>Qtd. atual</th><th>Mínimo</th><th>Unidade</th><th>Local</th></tr></thead>
+    <tbody>${crit.map(e=>`<tr><td><b>${e.nome}</b></td><td>${e.cat}</td><td><span class="badge badge-red">⚠ ${e.qtd}</span></td><td>${e.min}</td><td>${e.un}</td><td>${e.local}</td></tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function renderRelatorios(){
+  const tb=document.getElementById('tb-relatorios');
+  if(!data.relatorios.length){tb.innerHTML='<tr><td colspan="5"><div class="empty">Nenhum relatório criado</div></td></tr>';return;}
+  tb.innerHTML=data.relatorios.map((r,i)=>`
+    <tr>
+      <td><b>${r.titulo}</b></td>
+      <td>${r.tec}</td>
+      <td>${r.data}</td>
+      <td>${r.chamado}</td>
+      <td style="display:flex;gap:6px;align-items:center">
+        <button class="btn" style="padding:5px 10px;font-size:12px" onclick="exportarPDF(${i})">📄 PDF</button>
+        <button class="icon-btn" onclick="deleteRelatorio(${i})" title="Remover">🗑</button>
+      </td>
+    </tr>`).join('');
+}
+
+function renderAll(){renderChamados();renderFerramentas();renderEstoque();renderRelatorios();renderDashboard();}
+
+// fechar modal clicando fora
+document.querySelectorAll('.modal-bg').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+});
+
+loadData();
+</script>
+</body>
+</html>
